@@ -198,5 +198,3 @@ if total_fuel_needed % tank_capacity > 0:
 
 print("Кількість літрів бензину, що знадобиться:", total_fuel_needed)
 print("Кількість заправок під час подорожі:", refuels_needed)
-
-
