@@ -111,9 +111,9 @@ total_products = 375291
 products_first_second = 250449
 products_second_third = 222950
 
-number_first_storage = products_first_second - (total_products - products_second_third)
-number_second_storage = products_first_second - number_first_storage
-number_third_storage = total_products - number_first_storage - number_second_storage
+number_first_storage = 375291 - 222950  # Кількість товарів на першому складі
+number_second_storage = 250449 - number_first_storage  # Кількість товарів на другому складі
+number_third_storage = total_products - number_first_storage - number_second_storage  # Кількість товарів на третьому складі
 
 print("Кількість товарів на першому складі:", number_first_storage)
 print("Кількість товарів на другому складі:", number_second_storage)
@@ -180,9 +180,7 @@ print("Загальна вартість замовлення:", total_cost_orde
 # task 09
 total_photos = 232
 photos_per_page = 8
-total_pages = total_photos // photos_per_page
-if total_photos % photos_per_page > 0:
-    total_pages += 1
+total_pages = total_photos // photos_per_page + 1
 
 print("Кількість сторінок, необхідних для фотографій:", total_pages)
 
@@ -192,9 +190,7 @@ fuel_per_100km = 9
 tank_capacity = 48
 
 total_fuel_needed = (distance / 100) * fuel_per_100km
-refuels_needed = total_fuel_needed // tank_capacity
-if total_fuel_needed % tank_capacity > 0:
-    refuels_needed += 1
+refuels_needed = total_fuel_needed / tank_capacity + 1
 
 print("Кількість літрів бензину, що знадобиться:", total_fuel_needed)
 print("Кількість заправок під час подорожі:", refuels_needed)
