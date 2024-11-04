@@ -80,18 +80,27 @@ c) 2789 : 5     f) 19224 : 9
 ний бак?
 """
 # task 01
+#Базовий варіант через екранізацію
 alice_in_wonderland = (
-    "Would you tell me, please, which way I ought to go from here?\n"
-    "That depends a good deal on where you want to get to, said the Cat.\n"
-    "I don't much care where —— said Alice.\n"
-    "Then it doesn't matter which way you go, said the Cat.\n"
-    "—— so long as I get somewhere, Alice added as an explanation.\n"
-    "Oh, you're sure to do that, said the Cat, if you only walk long enough."
+    '"Would you tell me, please, which way I ought to go from here?"\n'
+    '"That depends a good deal on where you want to get to," said the Cat.\n'
+    '"I don\'t much care where ——" said Alice.\n'
+    '"Then it doesn\'t matter which way you go," said the Cat.\n'
+    '"—— so long as I get somewhere," Alice added as an explanation.\n'
+    '"Oh, you\'re sure to do that," said the Cat, "if you only walk long enough."'
 )
+#Варіант через абуз одинарних скобок
+# alice_in_wonderland = (
+#     '''"Would you tell me, please, which way I ought to go from here?"
+# "That depends a good deal on where you want to get to," said the Cat.
+# "I don't much care where ——" said Alice.
+# "Then it doesn't matter which way you go," said the Cat.
+# "—— so long as I get somewhere," Alice added as an explanation.
+# "Oh, you're sure to do that," said the Cat, "if you only walk long enough."'''
+# )
 
 # task 02
-single_quote_count = alice_in_wonderland.count("'")
-print("Кількість одинарних лапок у тексті:", single_quote_count)
+print(alice_in_wonderland)
 
 # task 03
 print(alice_in_wonderland)
