@@ -68,3 +68,43 @@ adwentures_of_tom_sawer_sentences = None
 # task 10
 """ Виведіть кількість слів останнього речення з adwentures_of_tom_sawer_sentences.
 """
+
+# task 01
+adwentures_of_tom_sawer = adwentures_of_tom_sawer.replace("\n", " ")
+print(adwentures_of_tom_sawer)
+
+# task 02
+adwentures_of_tom_sawer = adwentures_of_tom_sawer.replace("....", " ")
+print(adwentures_of_tom_sawer)
+
+# task 03
+import re
+adwentures_of_tom_sawer = re.sub(r'\s+', ' ', adwentures_of_tom_sawer)
+print(adwentures_of_tom_sawer)
+
+# task 04
+h_count = adwentures_of_tom_sawer.count('h')
+print(h_count)
+
+# task 05
+capitalized_words_count = sum(1 for word in adwentures_of_tom_sawer.split() if word[0].isupper())
+print(capitalized_words_count)
+
+# task 06
+second_tom_position = adwentures_of_tom_sawer.find("Tom", adwentures_of_tom_sawer.find("Tom") + 1)
+print(second_tom_position)
+
+# task 07
+adwentures_of_tom_sawer_sentences = re.split(r'(?<=[.!?]) +', adwentures_of_tom_sawer)
+
+# task 08
+fourth_sentence = adwentures_of_tom_sawer_sentences[3].lower()
+print(fourth_sentence)
+
+# task 09
+by_the_time_exists = any(sentence.startswith("By the time") for sentence in adwentures_of_tom_sawer_sentences)
+print(by_the_time_exists)
+
+# task 10
+last_sentence_word_count = len(adwentures_of_tom_sawer_sentences[-1].split())
+print(last_sentence_word_count)
