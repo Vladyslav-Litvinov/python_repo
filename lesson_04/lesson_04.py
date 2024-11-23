@@ -87,8 +87,8 @@ h_count = adwentures_of_tom_sawer.count('h')
 print(h_count)
 
 # task 05
-capitalized_words_count = sum(1 for word in adwentures_of_tom_sawer.split() if word[0].isupper())
-print(capitalized_words_count)
+capitalized_words = [word for word in adwentures_of_tom_sawer.split() if word.istitle()]
+print(capitalized_words)
 
 # task 06
 second_tom_position = adwentures_of_tom_sawer.find("Tom", adwentures_of_tom_sawer.find("Tom") + 1)
