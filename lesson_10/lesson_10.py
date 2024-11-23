@@ -111,41 +111,29 @@ str2 = "cat"
 print(find_substring(str1, str2))
 
 # task 7
-while True:
-    word = input("Enter a word containing the letter 'h': ")
-    if 'h' in word.lower():
-        print("Thank you!")
-        break
-    print("The word does not contain the letter 'h'. Try again.")
+def sum_even_numbers(numbers_list):
+  sum_even = 0
+  for num in numbers_list:
+    if num % 2 == 0:
+      sum_even += num
+  return sum_even
 # task 8
-prices = {
-    "pizza_large": 274,
-    "pizza_medium": 218,
-    "juice": 35,
-    "cake": 350,
-    "water": 21,
-}
-quantities = {
-    "pizza_large": 4,
-    "pizza_medium": 2,
-    "juice": 4,
-    "cake": 1,
-    "water": 3,
-}
-total_cost_order = sum(prices[item] * quantities[item] for item in prices)
-print("Загальна вартість замовлення:", total_cost_order, "грн")
+def filter_strings(data_list):
+  string_list = []
+  for item in data_list:
+    if isinstance(item, str):
+      string_list.append(item)
+  return string_list
 # task 9
-numbers = [
-    (8019, 8),
-    (9907, 9),
-    (2789, 5),
-    (7248, 6),
-    (7128, 5),
-    (19224, 9),
-]
-for idx, (num1, num2) in enumerate(numbers, start=1):
-    remainder = num1 % num2
-    print(f"Остача від ділення {num1} на {num2} ({chr(96 + idx)}):", remainder)
+def check_for_h(word):
+  return 'h' in word.lower()
+while True:
+  user_word = input("Введіть слово, яке містить літеру 'h': ")
+  if check_for_h(user_word):
+    print("Вітаю! Ви ввели слово з літерою 'h'.")
+    break
+  else:
+    print("Слово не містить літеру 'h'. Спробуйте ще раз.")
 # task 10
 areas = [434402, 37800]
 total_area = 0
