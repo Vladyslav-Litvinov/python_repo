@@ -1,101 +1,81 @@
-import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table
+from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 import random
 
-conn = sqlite3.connect('university.db')
-cursor = conn.cursor()
+DB_NAME = 'sqlite:///university.db'
+Base = declarative_base()
 
-# Створення таблиць
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS Students (
-    student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+# Проміжна таблиця для зв'язку "багато-до-багатьох"
+student_courses = Table(
+    'student_courses', Base.metadata,
+    Column('student_id', Integer, ForeignKey('students.id'), primary_key=True),
+    Column('course_id', Integer, ForeignKey('courses.id'), primary_key=True)
 )
-''')
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS Courses (
-    course_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL
-)
-''')
+class Student(Base):
+    __tablename__ = 'students'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    courses = relationship('Course', secondary=student_courses, back_populates='students')
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS StudentCourses (
-    student_id INTEGER,
-    course_id INTEGER,
-    FOREIGN KEY (student_id) REFERENCES Students(student_id),
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id),
-    PRIMARY KEY (student_id, course_id)
-)
-''')
+class Course(Base):
+    __tablename__ = 'courses'
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    students = relationship('Student', secondary=student_courses, back_populates='courses')
 
-# Додавання курсів
-courses = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'History']
-for course in courses:
-    cursor.execute('INSERT INTO Courses (title) VALUES (?)', (course,))
+# Підключення до бази
+engine = create_engine(DB_NAME)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
 
-# Додавання студентів
-students = [f'Student {i}' for i in range(1, 21)]
-for student in students:
-    cursor.execute('INSERT INTO Students (name) VALUES (?)', (student,))
+def populate_db():
+    courses = [Course(title=title) for title in ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'History']]
+    session.add_all(courses)
+    session.commit()
 
-# Розподіл студентів по курсах
-for student_id in range(1, 21):
-    num_courses = random.randint(1, 3)  # Кожен студент може бути зареєстрований на 1-3 курси
-    courses_ids = random.sample(range(1, 6), num_courses)
-    for course_id in courses_ids:
-        cursor.execute('INSERT INTO StudentCourses (student_id, course_id) VALUES (?, ?)', (student_id, course_id))
+    students = [Student(name=f'Student {i}') for i in range(1, 21)]
+    session.add_all(students)
+    session.commit()
 
-conn.commit()
+    for student in students:
+        student.courses = random.sample(courses, random.randint(1, 3))
+    session.commit()
 
-# Функція для додавання нового студента та запису його на курс
 def add_student(name, course_ids):
-    cursor.execute('INSERT INTO Students (name) VALUES (?)', (name,))
-    student_id = cursor.lastrowid
-    for course_id in course_ids:
-        cursor.execute('INSERT INTO StudentCourses (student_id, course_id) VALUES (?, ?)', (student_id, course_id))
-    conn.commit()
-    print(f"Студент {name} успішно доданий і записаний на курси: {course_ids}")
+    student = Student(name=name)
+    student.courses = session.query(Course).filter(Course.id.in_(course_ids)).all()
+    session.add(student)
+    session.commit()
+    print(f"Студент {name} успішно доданий!")
 
-# Функція для отримання студентів за курсом
 def get_students_by_course(course_id):
-    cursor.execute('''
-    SELECT Students.name 
-    FROM Students 
-    JOIN StudentCourses ON Students.student_id = StudentCourses.student_id 
-    WHERE StudentCourses.course_id = ?
-    ''', (course_id,))
-    return cursor.fetchall()
+    course = session.get(Course, course_id)
+    return [student.name for student in course.students] if course else []
 
-# Функція для отримання курсів за студентом
 def get_courses_by_student(student_id):
-    cursor.execute('''
-    SELECT Courses.title 
-    FROM Courses 
-    JOIN StudentCourses ON Courses.course_id = StudentCourses.course_id 
-    WHERE StudentCourses.student_id = ?
-    ''', (student_id,))
-    return cursor.fetchall()
+    student = session.get(Student, student_id)
+    return [course.title for course in student.courses] if student else []
 
-# Функція для оновлення імені студента
 def update_student(student_id, new_name):
-    cursor.execute('UPDATE Students SET name = ? WHERE student_id = ?', (new_name, student_id))
-    conn.commit()
-    print(f"Ім'я студента з ID {student_id} оновлено на {new_name}")
+    student = session.get(Student, student_id)
+    if student:
+        student.name = new_name
+        session.commit()
+        print(f"Ім'я студента оновлено на {new_name}")
 
-# Функція для видалення студента
 def delete_student(student_id):
-    cursor.execute('DELETE FROM Students WHERE student_id = ?', (student_id,))
-    cursor.execute('DELETE FROM StudentCourses WHERE student_id = ?', (student_id,))
-    conn.commit()
-    print(f"Студент з ID {student_id} успішно видалений")
+    student = session.get(Student, student_id)
+    if student:
+        session.delete(student)
+        session.commit()
+        print(f"Студента {student_id} видалено")
 
-# Приклади використання функцій
 if __name__ == "__main__":
+    populate_db()
     add_student('Новий Студент', [1, 3])
-    print("Студенти на курсі Mathematics (ID 1):", get_students_by_course(1))
-    print("Курси студента з ID 2:", get_courses_by_student(2))
-    update_student(2, 'Оновлене Ім\'я')
+    print("Студенти на курсі Mathematics:", get_students_by_course(1))
+    print("Курси студента 2:", get_courses_by_student(2))
+    update_student(2, "Оновлене Ім'я")
     delete_student(3)
-
-conn.close()
